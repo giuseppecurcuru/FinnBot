@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="it">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Finn - Tutte le Operazioni</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+</head>
+
+<body class="operations-page-body">
+    <nav class="top-nav">
+        <a href="index.html" class="logo"><img src="images/finnlogo.png" alt="Finn Logo"></a>
+        <div class="nav-links">
+            <a href="index.html" data-hover="Home">Home</a>
+            <a href="index.html#chat" data-hover="FinnBot">FinnBot</a>
+            <a href="index.html#dashboard-section" class="active" data-hover="I Miei Dati">I Miei Dati</a>
+        </div>
+    </nav>
+
+    <main class="operations-page-container">
+        <section class="operations-shell">
+            <div class="operations-header">
+                <div>
+                    <span class="operations-kicker">Archivio completo</span>
+                    <h1>Tutte le operazioni</h1>
+                    <p>Consulta ogni movimento registrato, filtra per mese e rimuovi le voci che non ti servono più.</p>
+                </div>
+                <a href="index.html#dashboard-section" class="section-link-btn">Torna ai dati</a>
+            </div>
+
+            <div class="operations-toolbar">
+                <div class="operations-filter-group">
+                    <label for="month-filter" class="operations-filter-label">Filtra per mese</label>
+                    <select id="month-filter" class="operations-filter"></select>
+                </div>
+                <div id="operations-summary" class="operations-summary"></div>
+            </div>
+
+            <div class="dash-card full-width operations-table-card">
+                <div class="table-container">
+                    <table id="operations-table" class="finn-table">
+                        <thead>
+                            <tr>
+                                <th>Categoria</th>
+                                <th>Data</th>
+                                <th>Importo</th>
+                                <th class="table-action-col">Azioni</th>
+                            </tr>
+                        </thead>
+                        <tbody id="operations-table-body"></tbody>
+                        <tfoot>
+                            <tr>
+                                <td colspan="2">Totale</td>
+                                <td id="operations-table-total" class="total-cell">€ 0.00</td>
+                                <td></td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                    <div id="operations-empty-state" class="empty-state operations-empty hidden">Nessuna operazione disponibile per questo filtro</div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <div id="expense-description-modal" class="category-edit-modal hidden" aria-hidden="true">
+        <div class="category-edit-backdrop" data-expense-description-close></div>
+        <div class="category-edit-card" role="dialog" aria-modal="true" aria-labelledby="expense-description-title">
+            <p class="confirm-modal-eyebrow">Descrizione spesa</p>
+            <h3 id="expense-description-title">Aggiungi o aggiorna descrizione</h3>
+            <form id="expense-description-form" class="expense-editor-form">
+                <textarea id="expense-description-input" class="expense-description-input" placeholder="Scrivi una descrizione per questa spesa" rows="5" maxlength="240"></textarea>
+                <div class="category-modal-actions">
+                    <button type="button" id="expense-description-cancel" class="modal-secondary-btn">Annulla</button>
+                    <button type="submit" class="modal-primary-btn">Salva descrizione</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div id="expense-edit-modal" class="category-edit-modal hidden" aria-hidden="true">
+        <div class="category-edit-backdrop" data-expense-edit-close></div>
+        <div class="category-edit-card" role="dialog" aria-modal="true" aria-labelledby="expense-edit-title">
+            <p class="confirm-modal-eyebrow">Modifica spesa</p>
+            <h3 id="expense-edit-title">Aggiorna operazione</h3>
+            <form id="expense-edit-form" class="expense-editor-form">
+                <input type="number" id="expense-edit-amount" placeholder="Importo" min="0.01" step="0.01" required>
+                <select id="expense-edit-category" required></select>
+                <input type="date" id="expense-edit-date" required>
+                <textarea id="expense-edit-description" class="expense-description-input" placeholder="Descrizione facoltativa" rows="4" maxlength="240"></textarea>
+                <div class="category-modal-actions">
+                    <button type="button" id="expense-edit-cancel" class="modal-secondary-btn">Annulla</button>
+                    <button type="submit" class="modal-primary-btn">Salva modifica</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div id="confirm-modal" class="confirm-modal hidden" aria-hidden="true">
+        <div class="confirm-modal-backdrop" data-confirm-close></div>
+        <div class="confirm-modal-card" role="dialog" aria-modal="true" aria-labelledby="confirm-modal-title">
+            <p class="confirm-modal-eyebrow">Conferma richiesta</p>
+            <h3 id="confirm-modal-title">Eliminare questa operazione?</h3>
+            <p id="confirm-modal-message">Questa azione non può essere annullata e l'elemento non potrà essere ripristinato.</p>
+            <div class="confirm-modal-actions">
+                <button type="button" id="confirm-cancel-btn" class="modal-secondary-btn">Annulla</button>
+                <button type="button" id="confirm-accept-btn" class="modal-danger-btn">Elimina</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="operations.js"></script>
+</body>
+
+</html>

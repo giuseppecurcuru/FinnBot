@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="it">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Finn - Il tuo Coach Finanziario</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="icon" type="image/png" href="favicon.svg">
+</head>
+
+<body>
+    <nav class="top-nav">
+        <a href="#" class="logo" id="logo-link"><img src="images/finnlogo.png" alt="Finn Logo"></a>
+        <div class="nav-links">
+            <a href="#" class="active" id="nav-home" data-hover="Home">Home</a>
+            <a href="#" id="nav-chat" data-hover="FinnBot">FinnBot</a>
+            <a href="#" id="nav-dati" data-hover="I Miei Dati">I Miei Dati</a>
+        </div>
+    </nav>
+
+    <main id="app-container">
+        <section id="hero-chat-section">
+            <div id="aurora-bg"></div>
+            <div class="hero-content" id="hero-intro">
+                <div class="hero-badge">
+                    <span class="badge-tag">Nuovo</span> Rivoluziona la tua finanza personale
+                </div>
+                <h1>Ciao sono <span class="title-finn">Finn!</span><br>Come posso aiutarti?</h1>
+                <div class="prompts-container">
+                    <button class="prompt-box">Resoconto spese mensili</button>
+                    <button class="prompt-box">Aggiungi spese giornaliere</button>
+                    <button class="prompt-box">Spese trasporti della settimana</button>
+                </div>
+            </div>
+
+            <div class="chat-container">
+                <div id="chat-history" class="hidden">
+                </div>
+                <div class="input-wrapper">
+                    <input type="text" id="chat-input" placeholder="Digita qui..." autocomplete="off">
+                    <button id="send-btn">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                            <line x1="5" y1="12" x2="19" y2="12"></line>
+                            <polyline points="12 5 19 12 12 19"></polyline>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <section id="dashboard-section">
+            <div class="dash-headers">
+                <h2>I miei <span class="highlight-dati">Dati</span></h2>
+                <p>Ecco le informazioni sulle tue spese</p>
+            </div>
+
+            <div class="dashboard-grid-home">
+                <div class="dash-card dash-bar-large">
+                    <div class="chart-container-inner chart-bar-large">
+                        <canvas id="barChart"></canvas>
+                        <div id="bar-chart-placeholder" class="chart-placeholder hidden" aria-hidden="true">
+                            <div class="chart-placeholder-bars">
+                                <span style="height: 34%;"></span>
+                                <span style="height: 48%;"></span>
+                                <span style="height: 28%;"></span>
+                                <span style="height: 72%;"></span>
+                                <span style="height: 56%;"></span>
+                                <span style="height: 82%;"></span>
+                                <span style="height: 44%;"></span>
+                            </div>
+                        </div>
+                        <div id="bar-empty-state" class="empty-state">Nessun dato disponibile</div>
+                    </div>
+                </div>
+
+                <div class="dashboard-insights-grid">
+                    <div class="dash-card dash-pie dash-mini-card">
+                        <div class="chart-container-inner chart-small-card">
+                            <canvas id="pieChart"></canvas>
+                            <div id="pie-chart-placeholder" class="chart-placeholder chart-placeholder-pie hidden" aria-hidden="true">
+                                <div class="chart-placeholder-pie-ring"></div>
+                            </div>
+                            <div id="pie-empty-state" class="empty-state">Nessun dato disponibile</div>
+                        </div>
+                    </div>
+
+                    <div class="dash-card dash-payments dash-mini-card">
+                        <ul id="payments-list" class="payments-list">
+                            <!-- Populated by JS -->
+                        </ul>
+                        <div id="payments-empty-state" class="empty-state">nessun pagamento imminente</div>
+                    </div>
+                </div>
+
+                <div class="dash-card dash-trend-card">
+                    <div class="chart-container-inner chart-line-large">
+                        <canvas id="monthlyTrendChart"></canvas>
+                        <div id="monthly-trend-placeholder" class="chart-placeholder chart-placeholder-line hidden" aria-hidden="true">
+                            <div class="chart-placeholder-line-path"></div>
+                            <div class="chart-placeholder-line-dots">
+                                <span></span><span></span><span></span><span></span><span></span>
+                            </div>
+                        </div>
+                        <div id="monthly-trend-empty-state" class="empty-state">Serve almeno una spesa per mostrare il trend mensile</div>
+                    </div>
+                    <div id="monthly-trend-legend" class="chart-custom-legend"></div>
+                </div>
+            </div>
+
+            <!-- Tabella Spese Recenti -->
+            <div class="dash-card full-width mt-30">
+                <div class="section-card-header">
+                    <h3>Ultime Operazioni</h3>
+                    <a href="operations.html" class="section-link-btn">Vedi tutte</a>
+                </div>
+                <div class="table-container">
+                    <table id="recent-operations-table" class="finn-table">
+                        <thead>
+                            <tr>
+                                <th>Categoria</th>
+                                <th>Data</th>
+                                <th>Importo</th>
+                                <th class="table-action-col">Azioni</th>
+                            </tr>
+                        </thead>
+                        <tbody id="table-body">
+                            <!-- Populated by JS -->
+                        </tbody>
+                        <tfoot>
+                            <tr>
+                                <td colspan="2">Totale</td>
+                                <td id="table-total" class="total-cell">€ 0.00</td>
+                                <td></td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                    <div id="table-empty-state" class="empty-state hidden">Nessuna spesa registrata</div>
+                </div>
+            </div>
+
+            <!-- Area Gestione Categorie -->
+            <div class="dash-card full-width mt-30 category-manager-card">
+                <h3>Gestione Categorie Personali</h3>
+                <form id="category-form" class="category-form">
+                    <input type="text" id="cat-title" placeholder="Nome (es. Regali)" required autocomplete="off" maxlength="26">
+                    <input type="color" id="cat-color" value="#007dff" required title="Scegli Colore">
+                    
+                    <div class="emoji-picker-wrapper">
+                        <button type="button" id="emoji-toggle-btn" class="emoji-toggle-btn">🍽️</button>
+                        <input type="hidden" id="cat-emoji" value="🍽️" required>
+                        <div id="emoji-popover" class="emoji-popover hidden">
+                            <div class="emoji-popover-header">
+                                <p class="emoji-helper-text">Su Mac premi `fn` oppure `Ctrl` + `Cmd` + `Spazio`. Su Windows premi `Win` + `.` per aprire il catalogo emoji.</p>
+                            </div>
+                            <div class="emoji-grid">
+                                <span>🍽️</span><span>🚗</span><span>🏠</span><span>🛍️</span>
+                                <span>❤️</span><span>💡</span><span>📱</span><span>🎁</span>
+                                <span>✈️</span><span>📚</span><span>🎮</span><span>☕</span>
+                                <span>🏥</span><span>🎬</span><span>🐶</span><span>💰</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="category-submit-btn">Aggiungi</button>
+                </form>
+                <div id="category-list" class="category-list"></div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="site-footer">
+        <p><strong>Developed by</strong> Giuseppe Curcurù</p>
+    </footer>
+
+    <div id="category-edit-modal" class="category-edit-modal hidden" aria-hidden="true">
+        <div class="category-edit-backdrop" data-category-edit-close></div>
+        <div class="category-edit-card" role="dialog" aria-modal="true" aria-labelledby="category-edit-title">
+            <p class="confirm-modal-eyebrow">Modifica categoria</p>
+            <h3 id="category-edit-title">Aggiorna categoria</h3>
+            <form id="category-edit-form" class="category-form category-form-modal">
+                <input type="text" id="category-edit-name" placeholder="Nome categoria" required autocomplete="off" maxlength="26">
+                <input type="color" id="category-edit-color" value="#007dff" required title="Scegli Colore">
+
+                <div class="emoji-picker-wrapper">
+                    <button type="button" id="category-edit-emoji-toggle" class="emoji-toggle-btn">🍽️</button>
+                    <input type="hidden" id="category-edit-emoji" value="🍽️" required>
+                    <div id="category-edit-emoji-popover" class="emoji-popover hidden">
+                        <div class="emoji-popover-header">
+                            <p class="emoji-helper-text">Usa una delle emoji rapide oppure apri il catalogo completo: su Mac `fn` o `Ctrl` + `Cmd` + `Spazio`, su Windows `Win` + `.`.</p>
+                        </div>
+                        <div class="emoji-grid">
+                            <span>🍽️</span><span>🚗</span><span>🏠</span><span>🛍️</span>
+                            <span>❤️</span><span>💡</span><span>📱</span><span>🎁</span>
+                            <span>✈️</span><span>📚</span><span>🎮</span><span>☕</span>
+                            <span>🏥</span><span>🎬</span><span>🐶</span><span>💰</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="category-modal-actions">
+                    <button type="button" id="category-edit-cancel" class="modal-secondary-btn">Annulla</button>
+                    <button type="submit" class="modal-primary-btn">Salva modifica</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div id="expense-description-modal" class="category-edit-modal hidden" aria-hidden="true">
+        <div class="category-edit-backdrop" data-expense-description-close></div>
+        <div class="category-edit-card" role="dialog" aria-modal="true" aria-labelledby="expense-description-title">
+            <p class="confirm-modal-eyebrow">Descrizione spesa</p>
+            <h3 id="expense-description-title">Aggiungi o aggiorna descrizione</h3>
+            <form id="expense-description-form" class="expense-editor-form">
+                <textarea id="expense-description-input" class="expense-description-input" placeholder="Scrivi una descrizione per questa spesa" rows="5" maxlength="240"></textarea>
+                <div class="category-modal-actions">
+                    <button type="button" id="expense-description-cancel" class="modal-secondary-btn">Annulla</button>
+                    <button type="submit" class="modal-primary-btn">Salva descrizione</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div id="expense-edit-modal" class="category-edit-modal hidden" aria-hidden="true">
+        <div class="category-edit-backdrop" data-expense-edit-close></div>
+        <div class="category-edit-card" role="dialog" aria-modal="true" aria-labelledby="expense-edit-title">
+            <p class="confirm-modal-eyebrow">Modifica spesa</p>
+            <h3 id="expense-edit-title">Aggiorna operazione</h3>
+            <form id="expense-edit-form" class="expense-editor-form">
+                <input type="number" id="expense-edit-amount" placeholder="Importo" min="0.01" step="0.01" required>
+                <select id="expense-edit-category" required></select>
+                <input type="date" id="expense-edit-date" required>
+                <textarea id="expense-edit-description" class="expense-description-input" placeholder="Descrizione facoltativa" rows="4" maxlength="240"></textarea>
+                <div class="category-modal-actions">
+                    <button type="button" id="expense-edit-cancel" class="modal-secondary-btn">Annulla</button>
+                    <button type="submit" class="modal-primary-btn">Salva modifica</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div id="confirm-modal" class="confirm-modal hidden" aria-hidden="true">
+        <div class="confirm-modal-backdrop" data-confirm-close></div>
+        <div class="confirm-modal-card" role="dialog" aria-modal="true" aria-labelledby="confirm-modal-title">
+            <p class="confirm-modal-eyebrow">Conferma richiesta</p>
+            <h3 id="confirm-modal-title">Eliminare questo elemento?</h3>
+            <p id="confirm-modal-message">Questa azione non può essere annullata e l'elemento non potrà essere ripristinato.</p>
+            <div class="confirm-modal-actions">
+                <button type="button" id="confirm-cancel-btn" class="modal-secondary-btn">Annulla</button>
+                <button type="button" id="confirm-accept-btn" class="modal-danger-btn">Elimina</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="script.js"></script>
+</body>
+
+</html>
