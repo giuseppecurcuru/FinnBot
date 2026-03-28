@@ -1,4 +1,4 @@
-const API_KEY = "INSERISCI-QUI-LA-TUA-CHIAVE";
+const API_KEY = "AIzaSyDGntRV7A99LLZSd3i9EfdKtdjTG2Mej0o";
 const GEMINI_MODEL = "gemini-2.5-flash";
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -1453,6 +1453,7 @@ Rispondi sempre e solo con JSON valido.`;
         return categories.map(c => c.title).join(", ");
     };
 
+    const barMonthFilter = document.getElementById('bar-month-filter');
     let barChartInstance = null;
     let pieChartInstance = null;
     let monthlyTrendChartInstance = null;
@@ -1471,6 +1472,45 @@ Rispondi sempre e solo con JSON valido.`;
                 <span>Media</span>
             </span>
         `;
+    }
+
+    function getPreferredBarMonth(expenses, selectedValue = '') {
+        const monthValues = [...new Set(expenses.map(expense => getMonthValue(expense.date)))].sort((a, b) => b.localeCompare(a));
+        if (!monthValues.length) return '';
+        if (selectedValue && monthValues.includes(selectedValue)) return selectedValue;
+
+        const currentMonth = getMonthValue(formatToday());
+        if (monthValues.includes(currentMonth)) return currentMonth;
+        return monthValues[0];
+    }
+
+    function renderBarMonthOptions(expenses, selectedValue = '') {
+        if (!barMonthFilter) return '';
+
+        const monthValues = [...new Set(expenses.map(expense => getMonthValue(expense.date)))].sort((a, b) => b.localeCompare(a));
+        barMonthFilter.innerHTML = '';
+
+        if (!monthValues.length) {
+            const option = document.createElement('option');
+            option.value = '';
+            option.textContent = 'Nessun mese';
+            barMonthFilter.appendChild(option);
+            barMonthFilter.value = '';
+            barMonthFilter.disabled = true;
+            return '';
+        }
+
+        barMonthFilter.disabled = false;
+        monthValues.forEach(monthValue => {
+            const option = document.createElement('option');
+            option.value = monthValue;
+            option.textContent = formatMonthLabel(monthValue);
+            barMonthFilter.appendChild(option);
+        });
+
+        const nextValue = getPreferredBarMonth(expenses, selectedValue);
+        barMonthFilter.value = nextValue;
+        return nextValue;
     }
 
     function updateDashboard() {
@@ -1536,13 +1576,33 @@ Rispondi sempre e solo con JSON valido.`;
                 payEmptyEl.classList.add('hidden');
                 upcomingPayments.slice(0, 6).forEach(pay => {
                     const daysUntil = getDaysUntil(pay.dueDate);
-                    const amountLabel = pay.amount === null ? '' : ` • ${formatCurrency(pay.amount)}`;
                     const li = document.createElement('li');
                     li.className = 'payment-item';
 
                     const content = document.createElement('div');
                     content.className = 'payment-item-content';
-                    content.textContent = `${pay.name}${amountLabel} • ${pay.dueDate} (${formatRelativeDays(daysUntil)})`;
+
+                    const title = document.createElement('div');
+                    title.className = 'payment-item-title';
+                    title.textContent = pay.name;
+
+                    const meta = document.createElement('div');
+                    meta.className = 'payment-item-meta';
+
+                    const dueChip = document.createElement('span');
+                    dueChip.className = 'payment-item-chip';
+                    dueChip.textContent = `${pay.dueDate} • ${formatRelativeDays(daysUntil)}`;
+                    meta.appendChild(dueChip);
+
+                    if (pay.amount !== null) {
+                        const amountChip = document.createElement('span');
+                        amountChip.className = 'payment-item-chip';
+                        amountChip.textContent = formatCurrency(pay.amount);
+                        meta.appendChild(amountChip);
+                    }
+
+                    content.appendChild(title);
+                    content.appendChild(meta);
 
                     const actions = document.createElement('div');
                     actions.className = 'payment-item-actions';
@@ -1614,8 +1674,11 @@ Rispondi sempre e solo con JSON valido.`;
             const ctx = barCanvas.getContext('2d');
             if (barChartInstance) barChartInstance.destroy();
 
-            const now = new Date();
-            const daysInMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0).getDate();
+            const activeBarMonth = renderBarMonthOptions(expenses, barMonthFilter?.value || '');
+            const [selectedYear, selectedMonth] = activeBarMonth
+                ? activeBarMonth.split('-').map(Number)
+                : [new Date().getFullYear(), new Date().getMonth() + 1];
+            const daysInMonth = new Date(selectedYear, selectedMonth, 0).getDate();
             const labels = Array.from({ length: daysInMonth }, (_, i) => (i + 1).toString());
             const data = Array.from({ length: daysInMonth }, () => 0);
             const dailyCategoryBreakdown = new Map();
@@ -1623,7 +1686,7 @@ Rispondi sempre e solo con JSON valido.`;
             let hasData = false;
             expenses.forEach(exp => {
                 const [d, m, y] = normalizeDate(exp.date).split('/');
-                if (parseInt(m) === now.getMonth() + 1 && parseInt(y) === now.getFullYear()) {
+                if (parseInt(m) === selectedMonth && parseInt(y) === selectedYear) {
                     const dayIndex = parseInt(d) - 1;
                     data[dayIndex] += parseFloat(exp.amount);
                     const dayTotals = dailyCategoryBreakdown.get(dayIndex) || new Map();
@@ -2228,6 +2291,10 @@ Rispondi sempre e solo con JSON valido.`;
             closeExpenseEditModal();
         });
     }
+
+    barMonthFilter?.addEventListener('change', () => {
+        updateDashboard();
+    });
 
     window.addEventListener('load', () => {
         updateDashboard();
