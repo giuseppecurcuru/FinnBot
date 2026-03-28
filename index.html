@@ -18,6 +18,7 @@
             <a href="#" class="active" id="nav-home" data-hover="Home">Home</a>
             <a href="#" id="nav-chat" data-hover="FinnBot">FinnBot</a>
             <a href="#" id="nav-dati" data-hover="I Miei Dati">I Miei Dati</a>
+            <a href="operations.html" data-hover="Operazioni">Operazioni</a>
         </div>
     </nav>
 
@@ -60,6 +61,17 @@
 
             <div class="dashboard-grid-home">
                 <div class="dash-card dash-bar-large">
+                    <div class="insight-card-header">
+                        <div class="insight-card-intro">
+                            <span class="insight-card-kicker">Quotidiano</span>
+                            <h3>Spese del mese</h3>
+                            <p>Una lettura giorno per giorno delle uscite registrate nel mese selezionato.</p>
+                        </div>
+                        <div class="insight-card-filter">
+                            <label for="bar-month-filter" class="insight-filter-label">Mese</label>
+                            <select id="bar-month-filter" class="operations-filter"></select>
+                        </div>
+                    </div>
                     <div class="chart-container-inner chart-bar-large">
                         <canvas id="barChart"></canvas>
                         <div id="bar-chart-placeholder" class="chart-placeholder hidden" aria-hidden="true">
@@ -79,6 +91,11 @@
 
                 <div class="dashboard-insights-grid">
                     <div class="dash-card dash-pie dash-mini-card">
+                        <div class="insight-card-intro">
+                            <span class="insight-card-kicker">Categorie</span>
+                            <h3>Distribuzione spese</h3>
+                            <p>Vedi subito quali categorie pesano di più sul totale registrato.</p>
+                        </div>
                         <div class="chart-container-inner chart-small-card">
                             <canvas id="pieChart"></canvas>
                             <div id="pie-chart-placeholder" class="chart-placeholder chart-placeholder-pie hidden" aria-hidden="true">
@@ -89,6 +106,11 @@
                     </div>
 
                     <div class="dash-card dash-payments dash-mini-card">
+                        <div class="payments-card-intro">
+                            <span class="payments-card-kicker">In arrivo</span>
+                            <h3>Pagamenti programmati</h3>
+                            <p>Tieni sotto controllo le prossime uscite e le loro scadenze.</p>
+                        </div>
                         <ul id="payments-list" class="payments-list">
                             <!-- Populated by JS -->
                         </ul>
@@ -97,6 +119,11 @@
                 </div>
 
                 <div class="dash-card dash-trend-card">
+                    <div class="insight-card-intro">
+                        <span class="insight-card-kicker">Trend</span>
+                        <h3>Andamento mensile</h3>
+                        <p>Confronta i totali mese per mese e osserva la distanza dalla tua media.</p>
+                    </div>
                     <div class="chart-container-inner chart-line-large">
                         <canvas id="monthlyTrendChart"></canvas>
                         <div id="monthly-trend-placeholder" class="chart-placeholder chart-placeholder-line hidden" aria-hidden="true">
@@ -113,8 +140,12 @@
 
             <!-- Tabella Spese Recenti -->
             <div class="dash-card full-width mt-30">
-                <div class="section-card-header">
-                    <h3>Ultime Operazioni</h3>
+                <div class="section-card-header section-card-header-rich">
+                    <div class="insight-card-intro section-card-intro">
+                        <span class="insight-card-kicker">Storico</span>
+                        <h3>Ultime Operazioni</h3>
+                        <p>Le spese piu recenti registrate, con accesso rapido a modifica, descrizione ed eliminazione.</p>
+                    </div>
                     <a href="operations.html" class="section-link-btn">Vedi tutte</a>
                 </div>
                 <div class="table-container">
@@ -144,7 +175,11 @@
 
             <!-- Area Gestione Categorie -->
             <div class="dash-card full-width mt-30 category-manager-card">
-                <h3>Gestione Categorie Personali</h3>
+                <div class="insight-card-intro section-card-intro">
+                    <span class="insight-card-kicker">Organizzazione</span>
+                    <h3>Gestione Categorie Personali</h3>
+                    <p>Crea, modifica e riordina le categorie per adattare Finn alle tue abitudini di spesa.</p>
+                </div>
                 <form id="category-form" class="category-form">
                     <input type="text" id="cat-title" placeholder="Nome (es. Regali)" required autocomplete="off" maxlength="26">
                     <input type="color" id="cat-color" value="#007dff" required title="Scegli Colore">
@@ -152,6 +187,7 @@
                     <div class="emoji-picker-wrapper">
                         <button type="button" id="emoji-toggle-btn" class="emoji-toggle-btn">🍽️</button>
                         <input type="hidden" id="cat-emoji" value="🍽️" required>
+                        <input type="text" class="emoji-native-input emoji-native-input-hidden" value="🍽️" autocomplete="off" inputmode="text" aria-label="Seleziona emoji categoria">
                         <div id="emoji-popover" class="emoji-popover hidden">
                             <div class="emoji-popover-header">
                                 <p class="emoji-helper-text">Su Mac premi `fn` oppure `Ctrl` + `Cmd` + `Spazio`. Su Windows premi `Win` + `.` per aprire il catalogo emoji.</p>
@@ -188,6 +224,7 @@
                 <div class="emoji-picker-wrapper">
                     <button type="button" id="category-edit-emoji-toggle" class="emoji-toggle-btn">🍽️</button>
                     <input type="hidden" id="category-edit-emoji" value="🍽️" required>
+                    <input type="text" class="emoji-native-input emoji-native-input-hidden" value="🍽️" autocomplete="off" inputmode="text" aria-label="Seleziona emoji categoria">
                     <div id="category-edit-emoji-popover" class="emoji-popover hidden">
                         <div class="emoji-popover-header">
                             <p class="emoji-helper-text">Usa una delle emoji rapide oppure apri il catalogo completo: su Mac `fn` o `Ctrl` + `Cmd` + `Spazio`, su Windows `Win` + `.`.</p>
