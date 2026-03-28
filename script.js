@@ -1,4 +1,4 @@
-const API_KEY = "AIzaSyDGntRV7A99LLZSd3i9EfdKtdjTG2Mej0o";
+const API_KEY = "INSERT-API-KEY";
 const GEMINI_MODEL = "gemini-2.5-flash";
 
 document.addEventListener('DOMContentLoaded', () => {
