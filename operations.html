@@ -15,7 +15,8 @@
         <div class="nav-links">
             <a href="index.html" data-hover="Home">Home</a>
             <a href="index.html#chat" data-hover="FinnBot">FinnBot</a>
-            <a href="index.html#dashboard-section" class="active" data-hover="I Miei Dati">I Miei Dati</a>
+            <a href="index.html#dashboard-section" data-hover="I Miei Dati">I Miei Dati</a>
+            <a href="operations.html" class="active" data-hover="Operazioni">Operazioni</a>
         </div>
     </nav>
 
@@ -27,7 +28,10 @@
                     <h1>Tutte le operazioni</h1>
                     <p>Consulta ogni movimento registrato, filtra per mese e rimuovi le voci che non ti servono più.</p>
                 </div>
-                <a href="index.html#dashboard-section" class="section-link-btn">Torna ai dati</a>
+                <div class="operations-header-actions">
+                    <button type="button" id="operations-add-expense-btn" class="section-link-btn section-link-btn-plus">Nuova spesa</button>
+                    <a href="index.html#dashboard-section" class="section-link-btn">Torna ai dati</a>
+                </div>
             </div>
 
             <div class="operations-toolbar">
@@ -92,6 +96,24 @@
                 <div class="category-modal-actions">
                     <button type="button" id="expense-edit-cancel" class="modal-secondary-btn">Annulla</button>
                     <button type="submit" class="modal-primary-btn">Salva modifica</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div id="expense-create-modal" class="category-edit-modal hidden" aria-hidden="true">
+        <div class="category-edit-backdrop" data-expense-create-close></div>
+        <div class="category-edit-card" role="dialog" aria-modal="true" aria-labelledby="expense-create-title">
+            <p class="confirm-modal-eyebrow">Nuova spesa</p>
+            <h3 id="expense-create-title">Aggiungi operazione</h3>
+            <form id="expense-create-form" class="expense-editor-form">
+                <input type="number" id="expense-create-amount" placeholder="Importo" min="0.01" step="0.01" required>
+                <select id="expense-create-category" required></select>
+                <input type="date" id="expense-create-date" required>
+                <textarea id="expense-create-description" class="expense-description-input" placeholder="Descrizione facoltativa" rows="4" maxlength="240"></textarea>
+                <div class="category-modal-actions">
+                    <button type="button" id="expense-create-cancel" class="modal-secondary-btn">Annulla</button>
+                    <button type="submit" class="modal-primary-btn">Aggiungi spesa</button>
                 </div>
             </form>
         </div>
