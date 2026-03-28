@@ -21,6 +21,14 @@ document.addEventListener('DOMContentLoaded', () => {
     const expenseEditDateInput = document.getElementById('expense-edit-date');
     const expenseEditDescriptionInput = document.getElementById('expense-edit-description');
     const expenseEditCancelBtn = document.getElementById('expense-edit-cancel');
+    const addExpenseBtn = document.getElementById('operations-add-expense-btn');
+    const expenseCreateModal = document.getElementById('expense-create-modal');
+    const expenseCreateForm = document.getElementById('expense-create-form');
+    const expenseCreateAmountInput = document.getElementById('expense-create-amount');
+    const expenseCreateCategoryInput = document.getElementById('expense-create-category');
+    const expenseCreateDateInput = document.getElementById('expense-create-date');
+    const expenseCreateDescriptionInput = document.getElementById('expense-create-description');
+    const expenseCreateCancelBtn = document.getElementById('expense-create-cancel');
 
     const DEFAULT_CATEGORIES = [
         { title: 'Cibo', color: '#ff9900', emoji: '🍽️' },
@@ -340,6 +348,22 @@ document.addEventListener('DOMContentLoaded', () => {
         renderPage();
     }
 
+    function createExpense(expense) {
+        const { expenses } = loadData();
+        const nextExpenses = [
+            ...expenses,
+            {
+                id: expense.id || generateId('expense'),
+                amount: expense.amount,
+                category: expense.category,
+                date: expense.date,
+                description: normalizeDescription(expense.description),
+                createdAt: expense.createdAt || new Date().toISOString()
+            }
+        ];
+        saveExpenses(nextExpenses);
+    }
+
     function deleteExpenseById(expenseId) {
         const { expenses } = loadData();
         saveExpenses(expenses.filter(expense => expense.id !== expenseId));
@@ -384,6 +408,19 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
+    function populateCreateExpenseCategoryOptions(selectedCategory = '') {
+        const { categories } = loadData();
+        expenseCreateCategoryInput.innerHTML = '';
+
+        categories.forEach(category => {
+            const option = document.createElement('option');
+            option.value = category.title;
+            option.textContent = `${category.emoji} ${category.title}`;
+            if (category.title === selectedCategory) option.selected = true;
+            expenseCreateCategoryInput.appendChild(option);
+        });
+    }
+
     function openExpenseDescriptionModal(expenseId) {
         const expense = findExpenseById(expenseId);
         if (!expense || !expenseDescriptionModal) return;
@@ -421,6 +458,23 @@ document.addEventListener('DOMContentLoaded', () => {
         expenseEditModal.classList.add('hidden');
         expenseEditModal.setAttribute('aria-hidden', 'true');
         editingExpenseId = null;
+    }
+
+    function openExpenseCreateModal() {
+        if (!expenseCreateModal) return;
+        populateCreateExpenseCategoryOptions();
+        expenseCreateAmountInput.value = '';
+        expenseCreateDateInput.value = formatDateForInput(formatToday());
+        expenseCreateDescriptionInput.value = '';
+        expenseCreateModal.classList.remove('hidden');
+        expenseCreateModal.setAttribute('aria-hidden', 'false');
+        expenseCreateAmountInput.focus();
+    }
+
+    function closeExpenseCreateModal() {
+        if (!expenseCreateModal) return;
+        expenseCreateModal.classList.add('hidden');
+        expenseCreateModal.setAttribute('aria-hidden', 'true');
     }
 
     function openConfirmModal({ title, message, confirmLabel = 'Elimina', onConfirm }) {
@@ -539,6 +593,9 @@ document.addEventListener('DOMContentLoaded', () => {
         if (e.key === 'Escape' && expenseEditModal && !expenseEditModal.classList.contains('hidden')) {
             closeExpenseEditModal();
         }
+        if (e.key === 'Escape' && expenseCreateModal && !expenseCreateModal.classList.contains('hidden')) {
+            closeExpenseCreateModal();
+        }
     });
 
     document.addEventListener('click', (e) => {
@@ -554,6 +611,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if (e.target.closest('[data-expense-edit-close]')) {
             closeExpenseEditModal();
+            return;
+        }
+
+        if (e.target.closest('[data-expense-create-close]')) {
+            closeExpenseCreateModal();
             return;
         }
 
@@ -582,8 +644,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
     monthFilter.addEventListener('change', renderPage);
 
+    addExpenseBtn?.addEventListener('click', openExpenseCreateModal);
     expenseDescriptionCancelBtn?.addEventListener('click', closeExpenseDescriptionModal);
     expenseEditCancelBtn?.addEventListener('click', closeExpenseEditModal);
+    expenseCreateCancelBtn?.addEventListener('click', closeExpenseCreateModal);
 
     expenseDescriptionForm?.addEventListener('submit', (e) => {
         e.preventDefault();
@@ -613,6 +677,28 @@ document.addEventListener('DOMContentLoaded', () => {
             description: expenseEditDescriptionInput.value
         });
         closeExpenseEditModal();
+        renderPage();
+    });
+
+    expenseCreateForm?.addEventListener('submit', (e) => {
+        e.preventDefault();
+
+        const amount = normalizeAmount(expenseCreateAmountInput.value);
+        const category = expenseCreateCategoryInput.value;
+        const date = normalizeDate(expenseCreateDateInput.value);
+
+        if (amount === null || !category) {
+            window.alert('Controlla importo e categoria della spesa.');
+            return;
+        }
+
+        createExpense({
+            amount,
+            category,
+            date,
+            description: expenseCreateDescriptionInput.value
+        });
+        closeExpenseCreateModal();
         renderPage();
     });
 
